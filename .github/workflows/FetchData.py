@@ -23,3 +23,11 @@ results = client.get("m6dm-c72p", limit=2000)
 
 # Convert to pandas DataFrame
 results_df = pd.DataFrame.from_records(results)
+
+#Output to COC.csv file for R
+results_df.to_csv("coc.csv", sep=',')
+
+#print some summary info
+print(results_df.head(7))
+print(results_df.tail(3))
+print(results_df.describe())
