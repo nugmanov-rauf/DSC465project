@@ -9,14 +9,40 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r include=FALSE}
 library(tidyverse)
 library(viridis)
-
 ```
 
-
+#### Import data from the python data fetch code. It creates the coc.csv file.
 ```{r}
 #set new directory
 setwd("~/PycharmProjects/DataVizProject")
 #import data
 coc <- read_csv("coc.csv")
 ```
+Summary of the data:
+```{r}
+head(coc)
 
+summary(coc)
+
+library(dataMaid)
+library(DataExplorer)
+# Get a high-level overview of the data using DataExplorer
+create_report(coc)
+
+```
+
+
+
+```{r}
+# Split the coc data into two datasets
+coc_inTrain <- createDataPartition(y = coc$X1, p = 0.7, list = FALSE)
+coc_training <- coc[coc_inTrain,] # The rows selected from inTrain sampling become our training set
+coc_testing <- coc[-coc_inTrain,] # Remove any rows that were selected for the training set from the test set
+
+#merge them back together
+coc2 <- rbind(coc_training, coc_testing)
+
+#confirm the two df are the same
+all.equal(coc,coc2)
+
+```
