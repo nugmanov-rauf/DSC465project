@@ -1,0 +1,28 @@
+---
+title: "Untitled"
+author: "Rauf"
+date: "2/23/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r read}
+mar2019<- read.csv("C:/Users/Rauf Nugmanov/Documents/R/dataViz/DSC465project/3mar2019.csv")
+apr2019<- read.csv("C:/Users/Rauf Nugmanov/Documents/R/dataViz/DSC465project/4apr2019.csv")
+may2019<- read.csv("C:/Users/Rauf Nugmanov/Documents/R/dataViz/DSC465project/5may2019.csv")
+
+```
+
+```{r pressure}
+df = data.frame(mar2019)   
+df1 = data.frame(apr2019)
+df2 = data.frame(may2019)
+total = rbind(df, df1)
+total = rbind(total, df2)
+write.csv(total,file = "marAprMay.csv")
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
