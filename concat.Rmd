@@ -7,22 +7,46 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
 ```
 
 ```{r read}
-mar2019<- read.csv("C:/Users/Rauf Nugmanov/Documents/R/dataViz/DSC465project/3mar2019.csv")
-apr2019<- read.csv("C:/Users/Rauf Nugmanov/Documents/R/dataViz/DSC465project/4apr2019.csv")
-may2019<- read.csv("C:/Users/Rauf Nugmanov/Documents/R/dataViz/DSC465project/5may2019.csv")
+setwd("C:/Users/Rauf Nugmanov/Documents/R/dataViz/DSC465project/data")
+
+lst <- c("3mar2019.csv","4apr2019.csv","5may2019.csv","6jun2019.csv")
+
+path = getwd()
+fullpath<-paste(path,"/", lst[1], sep="")
+fullpath
+
+
+for (vr in lst) {
+  
+  #print(vr)
+  fullpath<-paste(path,"/", vr, sep="")
+  fullpath
+  print("Reading...")
+  print(fullpath)
+  temp<- read.csv(fullpath)
+  df<-data.frame(temp)
+  total = rbind(total, df)
+  
+}
+write.csv(total,file = "full2019.csv")
+
+#mar2019<- read.csv("C:/Users/Rauf Nugmanov/Documents/R/dataViz/DSC465project/3mar2019.csv")
+#apr2019<- read.csv("C:/Users/Rauf Nugmanov/Documents/R/dataViz/DSC465project/4apr2019.csv")
+#may2019<- read.csv("C:/Users/Rauf Nugmanov/Documents/R/dataViz/DSC465project/5may2019.csv")
 
 ```
 
 ```{r pressure}
-df = data.frame(mar2019)   
-df1 = data.frame(apr2019)
-df2 = data.frame(may2019)
-total = rbind(df, df1)
-total = rbind(total, df2)
-write.csv(total,file = "marAprMay.csv")
+#df = data.frame(mar2019)   
+#df1 = data.frame(apr2019)
+#df2 = data.frame(may2019)
+#total = rbind(df, df1)
+#total = rbind(total, df2)
+#write.csv(total,file = "marAprMay.csv")
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
