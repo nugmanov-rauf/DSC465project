@@ -19,7 +19,7 @@ library(tidyverse)
 #Load the library
 library("ggmap")
 #Set your API Key
-myKey = "Put Your Key Here"
+myKey = "YourKeyHere"
 ggmap::register_google(key = myKey)
 
 
@@ -28,12 +28,15 @@ ggmap::register_google(key = myKey)
 #### Import lyft uber from city of chicago (coc) 
 ```{r}
 #set new directory
-setwd("~/Class/Winter/DataViz/Project/data sample")
+setwd("~/Class/Winter/DataViz/Project/")
 #import data
-coc <- read_csv("data sample/9Sep2019.csv")
+coc <- read_csv("data samples/9Sep2019.csv")
 
 summary(coc)
 
+```
+
+```{r include=FALSE}
 #Get the latest Install
 if(!requireNamespace("devtools")) install.packages("devtools")
 devtools::install_github("dkahle/ggmap", ref = "tidyup", force=TRUE)
@@ -76,7 +79,7 @@ Now let's look at all the pick-up locations:
 ```{r}
 # Chicago = 41.8781° N, -87.6298° W
 p <-ggmap(get_googlemap(center = c(lon = -87.629800, lat =41.878100 ),
-                    zoom = 16, scale = 2,
+                    zoom = 12, scale = 2,
                     maptype ='terrain',
                     color = 'color', key = myKey))
 
@@ -89,7 +92,7 @@ p + geom_point(aes(x = `Pickup Centroid Longitude`, y = `Pickup Centroid Latitud
 Now let's look at all the drop-off locations:
 ```{r}
 d <-ggmap(get_googlemap(center = c(lon = -87.629800, lat =41.878100 ),
-                    zoom = 22, scale = 2,
+                    zoom = 14, scale = 2,
                     maptype ='terrain',
                     color = 'color', key = myKey))
 
