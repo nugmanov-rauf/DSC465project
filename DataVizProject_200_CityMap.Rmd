@@ -1,0 +1,133 @@
+---
+title: "DataVizProject_200_CityMap"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Uber Lyft density in downtown chicago
+###
+
+```{r include=FALSE}
+library(lubridate)
+library(ggplot2)
+library(dplyr)
+library(data.table)
+library(ggrepel)
+library(tidyverse)
+#Load the library
+library("ggmap")
+#Set your API Key
+ggmap::register_google(key = "AIzaSyCWzqhwXE0ZyWFv21QkO2MHD5BdIsD5fBs")
+
+
+```
+
+#### Import lyft uber from city of chicago (coc) 
+```{r}
+#set new directory
+setwd("~/Class/Winter/DataViz/Project/data")
+#import data
+coc <- read_csv("data/9Sep2019.csv")
+
+summary(coc)
+
+#Get the latest Install
+if(!requireNamespace("devtools")) install.packages("devtools")
+devtools::install_github("dkahle/ggmap", ref = "tidyup", force=TRUE)
+
+```
+### Pick-Up Density
+
+Now let's look at all the pick-up locations:
+```{r}
+# Chicago = 41.8781° N, -87.6298° W
+p <-ggmap(get_googlemap(center = c(lon = -87.629800, lat =41.878100 ),
+                    zoom = 11, scale = 2,
+                    maptype ='roadmap',
+                    color = 'color', key = "AIzaSyCWzqhwXE0ZyWFv21QkO2MHD5BdIsD5fBs"))
+
+p + geom_point(aes(x = `Pickup Centroid Longitude`, y = `Pickup Centroid Latitude`), data = coc, size = 0.7) +
+  theme(legend.position="bottom")
+
+```
+
+### Drop-Off Density 
+Now let's look at all the drop-off locations:
+```{r}
+
+d <-ggmap(get_googlemap(center = c(lon = -87.629800, lat =41.878100 ),
+                    zoom = 11, scale = 2,
+                    maptype ='terrain',
+                    color = 'color', key = "AIzaSyCWzqhwXE0ZyWFv21QkO2MHD5BdIsD5fBs"))
+
+d + geom_point(aes(x = `Dropoff Centroid Longitude`, y = `Dropoff Centroid Latitude`), data = coc, size = 0.7) +
+  theme(legend.position="bottom")
+
+```
+#########
+#REPEAT ABOVE WITH ZOOM
+#########
+### Pick-Up Density
+
+Now let's look at all the pick-up locations:
+```{r}
+# Chicago = 41.8781° N, -87.6298° W
+p <-ggmap(get_googlemap(center = c(lon = -87.629800, lat =41.878100 ),
+                    zoom = 16, scale = 2,
+                    maptype ='terrain',
+                    color = 'color', key = "AIzaSyCWzqhwXE0ZyWFv21QkO2MHD5BdIsD5fBs"))
+
+p + geom_point(aes(x = `Pickup Centroid Longitude`, y = `Pickup Centroid Latitude`), data = coc, size = 0.7) +
+  theme(legend.position="bottom")
+
+```
+
+### Drop-Off Density 
+Now let's look at all the drop-off locations:
+```{r}
+d <-ggmap(get_googlemap(center = c(lon = -87.629800, lat =41.878100 ),
+                    zoom = 22, scale = 2,
+                    maptype ='terrain',
+                    color = 'color', key = "AIzaSyCWzqhwXE0ZyWFv21QkO2MHD5BdIsD5fBs"))
+
+d + geom_point(aes(x = `Dropoff Centroid Longitude`, y = `Dropoff Centroid Latitude`), data = coc, size = 0.7) +
+  theme(legend.position="bottom")
+
+```
+
+It is a bit tricky to see the density of the pickup and dropoffs because all the points are sitting on top of each other.  Below sets the alpha variable which will make the dots transparent.  This helps display the density of points plotted.  
+
+```{r}
+p +   geom_point(aes(x = `Pickup Centroid Longitude`, y = `Pickup Centroid Latitude`), colour = '#011f4b', data = coc, alpha=0.25, size = 0.5) + 
+  theme(legend.position="none")
+```  
+  
+  
+```{r}
+p + stat_density2d(
+    aes(x = `Pickup Centroid Longitude`, y = `Pickup Centroid Latitude`,
+        fill = ..level.., alpha = 0.15), size = 0.01, bins = 30,
+    data = coc, geom = "polygon") #+
+  #geom_point(aes(x = x, y = y, stroke = 2), colour=col4, data = n, size =1.5) + 
+  #geom_label_repel(aes(x, y, label = label), data=n, family = 'Times', size = 3, box.padding = 0.2, point.padding = 0.3, segment.color = 'grey50') 
+
+
+```
+  
+  
+```{r}
+
+p + stat_density2d(
+    aes(x = `Pickup Centroid Longitude`, y = `Pickup Centroid Latitude`, fill = ..level.., alpha = 0.25),
+    size = 0.1, bins = 40, data = coc,
+    geom = "polygon"
+  ) +
+  geom_density2d(data = coc, 
+               aes(x = `Pickup Centroid Longitude`, y = `Pickup Centroid Latitude`), size = 0.3)
+
+```
+  
+  
+#END

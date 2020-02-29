@@ -1,0 +1,114 @@
+---
+title: "DSC465 - Data Visualization Project"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r include=FALSE}
+library(tidyverse)
+library(viridis)
+library(dataMaid)
+library(DataExplorer)
+require(readxl)
+require(tidyverse)
+library(data.table)
+```
+
+### Winter 2020
+
+### By Traffic Predictors 
+#### Team Members: Naga Viraja Chunduru, Hetal Modi, Chris Figy, Lorraine (Lynne) Kriho, Rauf Nugmanov 
+
+## 100 Level Code: Data Exploration and Data Preparation Work
+
+### Create a sample file for each month.
+
+#### One month 2 gb files can be downloaded from:
+#### Each month has 8-9 million rides.
+
+```{r}
+#set new directory
+setwd("~/Class/Winter/DataViz/Project/data (full months)")
+#import 1 month of coc data
+coc <- read_csv("10Oct2019_Full.csv")
+```
+Summary of the data:
+```{r}
+head(coc)
+
+summary(coc)
+
+```
+
+#### Below samples a one month load of data into a 4000 random sample
+```{r}
+#Sample the months dataset and save a sample to the folder
+#str(df)
+set.seed(10)
+coc_table <- data.table(coc)
+coc_sample <- coc_table[sample(.N, 4000)]
+write.csv(coc_sample,"~/Class/Winter/DataViz/Project/data samples/10Oct2019_.csv", row.names = FALSE)
+```
+
+Explore the Data Sample
+```{r}
+#Explore the Data Sample
+summary(coc_sample)
+#Get a high-level overview of the data using DataExplorer
+#create_report(coc_sample)
+```
+
+
+```{r}
+#create a list of the files from your target directory
+lst <- list.files(path="~/Class/Winter/DataViz/Project/data samples")
+
+#lst <- c("3mar2019.csv","4apr2019.csv","5may2019.csv","6jun2019.csv")
+path = getwd()
+fullpath<-paste(path,"/data samples/", lst[1], sep="")
+fullpath
+total <- data.frame()
+
+for (vr in lst) {
+  
+  print(vr)
+  fullpath<-paste(path,"/data samples/", vr, sep="")
+  fullpath
+  print("Reading...")
+  print(fullpath)
+  temp<- read.csv(fullpath)
+  df<-data.frame(temp)
+  total <- rbind(total, df)
+  
+}
+write.csv(total,file = "full2019.csv")
+
+```
+
+```{r}
+#Tip verse Distance
+
+ggplot (coc_sample, aes(x=coc_sample$Fare, y=Tip)) +geom_point()
+
+ggplot (coc_sample, aes(x=Tip)) +geom_histogram()
+
+ggplot (coc_sample, aes(x=coc_sample$`Shared Trip Authorized`, y=Tip))+ geom_boxplot()
+
+ggplot (coc_sample, aes(x=coc_sample$`Trip Start Timestamp`, y=`Trip Total`))+ geom_col()
+
+
+```
+
+```{r}
+#
+```
+
+
+
+
+
