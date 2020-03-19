@@ -31,7 +31,7 @@ library(corrplot)
 #Load the library
 library("ggmap")
 #Set your API Key
-myKey = "AIzaSyCWzqhwXE0ZyWFv21QkO2MHD5BdIsD5fBs"
+myKey = "{Your Key Here}"
 ggmap::register_google(key = myKey)
 
 
