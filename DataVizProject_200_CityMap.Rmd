@@ -1,13 +1,15 @@
 ---
-title: "DataVizProject_200_CityMap"
+title: "Data Viz Project - 200"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-## Uber Lyft density in downtown chicago
-###
+## RideShare Map Traffic Density in Downtown Chicago
+
+### Import City of Chicago Sample Data from 100 Level Code 
+#####  You will need to populate the google api with your key
 
 ```{r include=FALSE}
 library(lubridate)
@@ -16,21 +18,31 @@ library(dplyr)
 library(data.table)
 library(ggrepel)
 library(tidyverse)
+library(dataMaid)
+library(DataExplorer)
+library(janitor)
+library(lubridate)
+library(Hmisc)
+library(outliers)
+library(FactoMineR)
+library(factoextra)
+library(corrplot)
+
 #Load the library
 library("ggmap")
 #Set your API Key
-myKey = "YourKeyHere"
+myKey = "AIzaSyCWzqhwXE0ZyWFv21QkO2MHD5BdIsD5fBs"
 ggmap::register_google(key = myKey)
 
 
 ```
 
-#### Import lyft uber from city of chicago (coc) 
+#### Import data file created from 100 level code which pulls from city of chicago (coc) 
 ```{r}
 #set new directory
 setwd("~/Class/Winter/DataViz/Project/")
 #import data
-coc <- read_csv("data samples/9Sep2019.csv")
+coc <- read_csv("full2019.csv")
 
 summary(coc)
 
@@ -38,11 +50,12 @@ summary(coc)
 
 ```{r include=FALSE}
 #Get the latest Install
-if(!requireNamespace("devtools")) install.packages("devtools")
-devtools::install_github("dkahle/ggmap", ref = "tidyup", force=TRUE)
+#if(!requireNamespace("devtools")) install.packages("devtools")
+#devtools::install_github("dkahle/ggmap", ref = "tidyup", force=TRUE)
 
 ```
-### Pick-Up Density
+
+## Pick-Up Density
 
 Now let's look at all the pick-up locations:
 ```{r}
@@ -52,7 +65,7 @@ p <-ggmap(get_googlemap(center = c(lon = -87.629800, lat =41.878100 ),
                     maptype ='roadmap',
                     color = 'color', key = myKey))
 
-p + geom_point(aes(x = `Pickup Centroid Longitude`, y = `Pickup Centroid Latitude`), data = coc, size = 0.7) +
+p + geom_point(aes(x = Pickup.Centroid.Longitude, y = Pickup.Centroid.Latitude), data = coc, size = 0.7) +
   theme(legend.position="bottom")
 
 ```
@@ -66,7 +79,7 @@ d <-ggmap(get_googlemap(center = c(lon = -87.629800, lat =41.878100 ),
                     maptype ='terrain',
                     color = 'color', key = myKey))
 
-d + geom_point(aes(x = `Dropoff Centroid Longitude`, y = `Dropoff Centroid Latitude`), data = coc, size = 0.7) +
+d + geom_point(aes(x = Dropoff.Centroid.Longitude, y = Dropoff.Centroid.Latitude), data = coc, size = 0.7) +
   theme(legend.position="bottom")
 
 ```
@@ -83,7 +96,7 @@ p <-ggmap(get_googlemap(center = c(lon = -87.629800, lat =41.878100 ),
                     maptype ='terrain',
                     color = 'color', key = myKey))
 
-p + geom_point(aes(x = `Pickup Centroid Longitude`, y = `Pickup Centroid Latitude`), data = coc, size = 0.7) +
+p + geom_point(aes(x = Pickup.Centroid.Longitude, y = Pickup.Centroid.Latitude), data = coc, size = 0.7) +
   theme(legend.position="bottom")
 
 ```
@@ -96,7 +109,7 @@ d <-ggmap(get_googlemap(center = c(lon = -87.629800, lat =41.878100 ),
                     maptype ='terrain',
                     color = 'color', key = myKey))
 
-d + geom_point(aes(x = `Dropoff Centroid Longitude`, y = `Dropoff Centroid Latitude`), data = coc, size = 0.7) +
+d + geom_point(aes(x = Dropoff.Centroid.Longitude, y = Dropoff.Centroid.Latitude), data = coc, size = 0.7) +
   theme(legend.position="bottom")
 
 ```
@@ -104,14 +117,14 @@ d + geom_point(aes(x = `Dropoff Centroid Longitude`, y = `Dropoff Centroid Latit
 It is a bit tricky to see the density of the pickup and dropoffs because all the points are sitting on top of each other.  Below sets the alpha variable which will make the dots transparent.  This helps display the density of points plotted.  
 
 ```{r}
-p +   geom_point(aes(x = `Pickup Centroid Longitude`, y = `Pickup Centroid Latitude`), colour = '#011f4b', data = coc, alpha=0.25, size = 0.5) + 
+p +   geom_point(aes(x = Pickup.Centroid.Longitude, y = Pickup.Centroid.Latitude), colour = '#011f4b', data = coc, alpha=0.25, size = 0.5) + 
   theme(legend.position="none")
 ```  
   
   
 ```{r}
 p + stat_density2d(
-    aes(x = `Pickup Centroid Longitude`, y = `Pickup Centroid Latitude`,
+    aes(x = Pickup.Centroid.Longitude, y = Pickup.Centroid.Latitude,
         fill = ..level.., alpha = 0.15), size = 0.01, bins = 30,
     data = coc, geom = "polygon") #+
   #geom_point(aes(x = x, y = y, stroke = 2), colour=col4, data = n, size =1.5) + 
@@ -124,14 +137,18 @@ p + stat_density2d(
 ```{r}
 
 p + stat_density2d(
-    aes(x = `Pickup Centroid Longitude`, y = `Pickup Centroid Latitude`, fill = ..level.., alpha = 0.25),
+    aes(x = Pickup.Centroid.Longitude, y = Pickup.Centroid.Latitude, fill = ..level.., alpha = 0.25),
     size = 0.1, bins = 40, data = coc,
     geom = "polygon"
   ) +
   geom_density2d(data = coc, 
-               aes(x = `Pickup Centroid Longitude`, y = `Pickup Centroid Latitude`), size = 0.3)
+               aes(x = Pickup.Centroid.Longitude, y = Pickup.Centroid.Latitude), size = 0.3)
 
 ```
+  
+## Move this to user interaction shiny application  
+  
+##### I'm going to move this code to a shiny app so one can see the map change by selecting an hour of the day. 
   
   
 #END
