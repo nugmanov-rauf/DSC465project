@@ -28,8 +28,11 @@ library(data.table)
 
 ### Create a sample file for each month.
 
-#### One month 2 gb files can be downloaded from:
-#### Each month has 8-9 million rides.
+#### One month 2 gb files can be downloaded from City of Chicago: coc
+#### Each month has approx. 9 million rides. The dataset is large. We will need to download and sample the data for last year - 2019.
+
+We each downloaded 2-3 months and then decided to take a 4000 random sample out of the 9 million rides per month. Then using this 100 level code you can create your sample file. We each uploaded the datafile to Github. From there you can run this code and download sampled datasets.
+
 
 ```{r}
 #set new directory
@@ -46,6 +49,7 @@ summary(coc)
 ```
 
 #### Below samples a one month load of data into a 4000 random sample
+
 ```{r}
 #Sample the months dataset and save a sample to the folder
 #str(df)
@@ -63,6 +67,19 @@ summary(coc_sample)
 #create_report(coc_sample)
 ```
 
+
+### Data Explorer:
+
+The data explorer produces a nice html report found in github and with the 100 level code. We will comment the code out here as the knit will produce to much output causing extra pages of logging not needed here. Please review the html file included.
+
+```{r}
+#Get a high-level overview of the data using DataExplorer
+#create_report(coc_sample)
+```
+
+### Create a single file for 2019 by combining the monthly sample files. 
+
+We will combine the sample data files for each month into one year data file. Since all the large monthly downloads are in a folder we will combine all files in that folder below.
 
 ```{r}
 #create a list of the files from your target directory
@@ -97,8 +114,15 @@ for (vr in lst) {
 
 #total$hour <- hour(as.POSIXlt(total$Trip.Start.Timestamp, tryformat=(c("%m/%d/%Y %I:%M:%S %p", "%m/%d/%y %H:%M","%m/%d/%Y %H:%M:%S")))  
 
-write.csv(total,file = "full2019.csv")
+```
 
+* ##### We probably could have increased this dataset in size, but this kept the tools fast for our work.
+
+### Write a 2019 one year sample file
+
+We create a csv file named full2019.csv with our random sample data. 
+```{r}
+write.csv(total,file = "full2019.csv")
 ```
 
 ### We now have a file for our exploratory and explainatory analysis.
